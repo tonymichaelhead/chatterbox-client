@@ -3,10 +3,23 @@ var app = {};
 app.friends = [];
 app.init = function() {
   this.server = 'http://parse.la.hackreactor.com/chatterbox/classes/messages';
-  $('#submit').on('click', app.handleSubmit);
-  $('#main').on('click', '.username', app.handleUsernameClick);
+  $('.submit').on('click', app.handleSubmit);
+  $('#chats').on('click', '.username', app.handleUsernameClick);
+  $('#create-room').on('click', function() {
+    let currentRoom = $('#new-room').val();
+    if (!app.rooms[currentRoom]) {
+      app.renderRoom(currentRoom);  
+    }
+    
+  });
   
 };
+
+app.rooms = {
+  lobby: true,
+  testing: true
+};
+
 app.send = function(message) { 
   $.ajax({
     // This is the url you should use to communicate with the parse API server.
@@ -17,7 +30,7 @@ app.send = function(message) {
     success: function (data) {
       let room = $('#roomSelect').val();
       app.fetch(room);
-      // console.log('chatterbox: Message sent');
+      console.log('chatterbox: Message sent');
     },
     error: function (data) {
       // See: https://developer.mozilla.org/en-US/docs/Web/API/console.error
@@ -93,15 +106,16 @@ app.renderMessage = function(message) {
 };
 
 app.renderRoom = function(roomName) {
+  app.rooms[roomName] = true;
   let roomNode = $('<option value="' + roomName + '">' + roomName + '</option>');
-  $('#roomSelect').append(roomNode);
-
-  
+  $('#roomSelect').append(roomNode);  
 };
 
 app.handleUsernameClick = function() {
   console.log($(this).val());
   app.friends.push($(this).val());
+  let room = $('#roomSelect').val();
+  app.fetch(room);
 };
 
 app.handleSubmit = function() {
@@ -144,4 +158,6 @@ $( document ).ready(function() {
 //   text: 'is this working',
 //   roomname: '4chan'
 // };
+
+
 
