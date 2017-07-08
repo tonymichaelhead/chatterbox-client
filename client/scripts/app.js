@@ -68,7 +68,7 @@ app.renderMessage = function(message) {
   let $messageNode = $('<div class="messageNode"></div>');
   $messageNode.addClass(message.roomname);
   
-  let $user = $('<button type="button" id="user"></button>');
+  let $user = $(`<button class="user" value="${message.username}"></button>`);
   $user.addClass(message.username);
   $user.text(message.username + ': ');
   $messageNode.append($user);
@@ -81,6 +81,8 @@ app.renderMessage = function(message) {
     $text.css('font-weight', 'bold');
   }
    
+  
+  
   let $timeStamp = $(`<div id="time-stamp">${$.timeago(message.createdAt)}</div>`);
   $messageNode.append($timeStamp);
   
@@ -92,6 +94,11 @@ app.renderRoom = function(roomName) {
   $('#roomSelect').append(roomNode);
 
   
+};
+
+app.handleUsernameClick = function() {
+  console.log($(this).val());
+  app.friends.push($(this).val());
 };
 
 app.handleSubmit = function() {
@@ -119,17 +126,14 @@ $( document ).ready(function() {
     app.fetch(room);
   }, 5000);
   
-  $('#user').on('click', function() {
-    console.log('asdf');
-    app.friends.push($(this).val());
-  });
+  $('body').on('click', '.user', app.handleUsernameClick);
   
-  var button = document.getElementById("user");
-  button.onclick = function() {
-  //do stuff
-    console.log('asdf');
-    app.friends.push($(this).val());
-  };
+  // var button = document.getElementById("user");
+  // button.onclick = function() {
+  // //do stuff
+  //   console.log('asdf');
+  //   app.friends.push($(this).val());
+  // };
   
 });
 
