@@ -1,6 +1,6 @@
 // YOUR CODE HERE:
 var app = {};
-
+app.friends = [];
 app.init = function() {
   this.server = 'http://parse.la.hackreactor.com/chatterbox/classes/messages';
 };
@@ -12,7 +12,8 @@ app.send = function(message) {
     data: JSON.stringify(message),
     contentType: 'application/json',
     success: function (data) {
-      app.fetch();
+      let room = $('#roomSelect').val();
+      app.fetch(room);
       // console.log('chatterbox: Message sent');
     },
     error: function (data) {
@@ -23,7 +24,7 @@ app.send = function(message) {
 
 };
 
-app.fetch = function() {
+app.fetch = function(room) {
   $.ajax({
     
     url: app.server,
@@ -36,7 +37,7 @@ app.fetch = function() {
     //   data = JSON.stringify(someData);
     //   return data;
     // },
-    data: { order: '-updatedAt' },
+    data: { order: '-createdAt' },
     // data: { format: 'json'},
     // contentType: 'application/json',
     success: function (data) {
@@ -47,7 +48,9 @@ app.fetch = function() {
       let messages = data.results;
       console.log('chatterbox: Message fetched', data);
       for (let i = 0; i < messages.length; i++) {
-        app.renderMessage(messages[i]);
+        if (messages[i].roomname === room) {
+          app.renderMessage(messages[i]);
+        }
       }
     },
     error: function (data) {
@@ -65,16 +68,19 @@ app.renderMessage = function(message) {
   let $messageNode = $('<div class="messageNode"></div>');
   $messageNode.addClass(message.roomname);
   
-  let $user = $('<span></span>');
+  let $user = $('<button type="button" id="user"></button>');
   $user.addClass(message.username);
   $user.text(message.username + ': ');
   $messageNode.append($user);
   
-  let $text = $('<span></span>');
+  let $text = $('<div></div>');
   $text.attr('id', message.objectId);
   $text.text(message.text);
   $messageNode.append($text);
-  
+  if (app.friends.includes(message.username)) {
+    $text.css('font-weight', 'bold');
+  }
+   
   let $timeStamp = $(`<div id="time-stamp">${$.timeago(message.createdAt)}</div>`);
   $messageNode.append($timeStamp);
   
@@ -86,22 +92,45 @@ app.renderRoom = function(roomName) {
   $('#roomSelect').append(roomNode);
 
   
-};   
+};
+
+app.handleSubmit = function() {
+  let text = $('#text-input').val();
+  let username = window.location.search;//fill in with function to get user
+  //console.log(username.slice(10));
+  let roomname = 'testing';//fill in to get room
+  let message = {
+    'username': username.slice(10),
+    'text': text,
+    'roomname': $('#roomSelect').val()
+  };
+  app.send(message);
+};
+   
 $( document ).ready(function() {
-  $('#submit').on('click', function() {
-    let text = $('#text-input').val();
-    let username = 'anon';//fill in with function to get user
-    let roomname = 'testing';//fill in to get room
-    let message = {
-      'username': username,
-      'text': text,
-      'roomname': roomname
-    };
-    app.send(message);
+  $('#submit').on('click', app.handleSubmit);
+  
+  
+  let room = $('#roomSelect').val();
+  app.init();
+  app.fetch(room);
+  setInterval(function() {
+    let room = $('#roomSelect').val();
+    app.fetch(room);
+  }, 5000);
+  
+  $('#user').on('click', function() {
+    console.log('asdf');
+    app.friends.push($(this).val());
   });
   
-  app.init();
-  app.fetch();
+  var button = document.getElementById("user");
+  button.onclick = function() {
+  //do stuff
+    console.log('asdf');
+    app.friends.push($(this).val());
+  };
+  
 });
 
 
