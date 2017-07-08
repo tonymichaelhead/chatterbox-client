@@ -3,6 +3,9 @@ var app = {};
 app.friends = [];
 app.init = function() {
   this.server = 'http://parse.la.hackreactor.com/chatterbox/classes/messages';
+  $('#submit').on('click', app.handleSubmit);
+  $('#main').on('click', '.username', app.handleUsernameClick);
+  
 };
 app.send = function(message) { 
   $.ajax({
@@ -68,7 +71,7 @@ app.renderMessage = function(message) {
   let $messageNode = $('<div class="messageNode"></div>');
   $messageNode.addClass(message.roomname);
   
-  let $user = $(`<button class="user" value="${message.username}"></button>`);
+  let $user = $(`<button class="username" value="${message.username}"></button>`);
   $user.addClass(message.username);
   $user.text(message.username + ': ');
   $messageNode.append($user);
@@ -83,8 +86,8 @@ app.renderMessage = function(message) {
    
   
   
-  let $timeStamp = $(`<div id="time-stamp">${$.timeago(message.createdAt)}</div>`);
-  $messageNode.append($timeStamp);
+  // let $timeStamp = $(`<div id="time-stamp">${$.timeago(message.createdAt)}</div>`);
+  // $messageNode.append($timeStamp);
   
   $('#chats').append($messageNode); 
 };
@@ -115,8 +118,7 @@ app.handleSubmit = function() {
 };
    
 $( document ).ready(function() {
-  $('#submit').on('click', app.handleSubmit);
-  
+
   
   let room = $('#roomSelect').val();
   app.init();
@@ -126,8 +128,7 @@ $( document ).ready(function() {
     app.fetch(room);
   }, 5000);
   
-  $('body').on('click', '.user', app.handleUsernameClick);
-  
+
   // var button = document.getElementById("user");
   // button.onclick = function() {
   // //do stuff
