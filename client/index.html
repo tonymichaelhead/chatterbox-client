@@ -7,6 +7,7 @@
 
     <!-- dependencies -->
     <script src="bower_components/jquery/dist/jquery.js"></script>
+    <script src="../lib/jquery-timeago.js"></script>
     <script src="bower_components/underscore/underscore-min.js"></script>
     <script>
       // YOU DO NOT NEED TO EDIT THIS CODE
@@ -29,8 +30,12 @@
       <select id="roomSelect">
         <option value="lobby">lobby</option>
       </select>
+      <div id="textBox">
+        <textarea id="text-input" rows="4" cols="50">Send a message!</textarea>
+        <button id="submit">Send</button>
+      </div>
     </div>
-    <div id="textBox"></div>
+    
     <div id="chats"></div>
   </body>
 </html>
