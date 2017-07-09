@@ -62,7 +62,7 @@ app.fetch = function(room) {
       // });
       app.clearMessages();
       let messages = data.results;
-      console.log('chatterbox: Message fetched', data);
+      // console.log('chatterbox: Message fetched', data);
       for (let i = 0; i < messages.length; i++) {
         if (messages[i].roomname === room) {
           app.renderMessage(messages[i]);
